@@ -1,5 +1,5 @@
 /**
- * db/database.js â€” PostgreSQL connection + table setup
+ * db/database.js — PostgreSQL connection + table setup
  *
  * Uses the "pg" library to connect to PostgreSQL.
  * Railway provides a DATABASE_URL environment variable automatically.
@@ -37,7 +37,7 @@ async function query(text, params) {
  * Called once on server startup.
  */
 async function initTables() {
-  // â”€â”€ USERS TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── USERS TABLE ────────────────────────────────
   // Stores Google users who have logged in
   await query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -51,7 +51,7 @@ async function initTables() {
     );
   `);
 
-  // â”€â”€ SUBSCRIPTIONS TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── SUBSCRIPTIONS TABLE ─────────────────────────
   // Stores active and past subscriptions
   await query(`
     CREATE TABLE IF NOT EXISTS subscriptions (
@@ -68,7 +68,7 @@ async function initTables() {
     );
   `);
 
-  // â”€â”€ PAYMENTS TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── PAYMENTS TABLE ──────────────────────────────
   // Stores every payment transaction for audit trail
   await query(`
     CREATE TABLE IF NOT EXISTS payments (
@@ -87,7 +87,7 @@ async function initTables() {
     );
   `);
 
-  console.log("   â†’ users, subscriptions, payments tables ready");
+  console.log("   → users, subscriptions, payments tables ready");
 }
 
 module.exports = { query, initTables };
