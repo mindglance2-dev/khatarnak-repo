@@ -86,7 +86,24 @@ async function initTables() {
       verified_at          TIMESTAMP
     );
   `);
+// ── TRADES TABLE ────────────────────────────────
+await query(`
+  CREATE TABLE IF NOT EXISTS trades (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    symbol      VARCHAR(50),
+    type        VARCHAR(10),
+    entry       NUMERIC,
+    exit        NUMERIC,
+    quantity    NUMERIC,
+    pnl         NUMERIC,
+    notes       TEXT,
+    trade_date  DATE,
+    created_at  TIMESTAMP DEFAULT NOW()
+  );
+`);
 
+console.log("   → trades table ready");
   console.log("   → users, subscriptions, payments tables ready");
 }
 
