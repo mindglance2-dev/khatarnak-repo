@@ -1,21 +1,24 @@
-/**
- * routes/trades.js
- * GET    /trades       → get all trades for logged-in user
- * POST   /trades       → save a new trade
- * DELETE /trades/:id   → delete a trade
- */
-
 const express     = require("express");
 const router      = express.Router();
 const db          = require("../db/database");
 const requireAuth = require("../middleware/authMiddleware");
 
-// ── GET all trades ──────────────────────────────
+// ── Helper: get user id from googleId ──
+async function getUserId(googleId) {
+  const result = await db.query(
+    "SELECT id FROM users WHERE google_id = $1",
+    [googleId]
+  );
+  return result.rows[0]?.id;
+}
+
+// ── GET all trades ──
 router.get("/", requireAuth, async (req, res) => {
   try {
+    const userId = await getUserId(req.user.googleId);
     const result = await db.query(
-      `SELECT * FROM trades WHERE user_id = $1 ORDER BY trade_date DESC`,
-      [req.user.userId]
+      "SELECT * FROM trades WHERE user_id = $1 ORDER BY trade_date DESC",
+      [userId]
     );
     res.json({ success: true, trades: result.rows });
   } catch (err) {
@@ -24,15 +27,15 @@ router.get("/", requireAuth, async (req, res) => {
   }
 });
 
-// ── POST save a trade ───────────────────────────
+// ── POST save trade ──
 router.post("/", requireAuth, async (req, res) => {
   const { symbol, type, entry, exit, quantity, pnl, notes, trade_date } = req.body;
-
   try {
+    const userId = await getUserId(req.user.googleId);
     const result = await db.query(
       `INSERT INTO trades (user_id, symbol, type, entry, exit, quantity, pnl, notes, trade_date)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-      [req.user.userId, symbol, type, entry, exit, quantity, pnl, notes, trade_date]
+      [userId, symbol, type, entry, exit, quantity, pnl, notes, trade_date]
     );
     res.json({ success: true, trade: result.rows[0] });
   } catch (err) {
@@ -41,12 +44,13 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
-// ── DELETE a trade ──────────────────────────────
+// ── DELETE trade ──
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
+    const userId = await getUserId(req.user.googleId);
     await db.query(
-      `DELETE FROM trades WHERE id = $1 AND user_id = $2`,
-      [req.params.id, req.user.userId]
+      "DELETE FROM trades WHERE id = $1 AND user_id = $2",
+      [req.params.id, userId]
     );
     res.json({ success: true });
   } catch (err) {
