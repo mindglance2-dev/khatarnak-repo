@@ -14,8 +14,9 @@ require("dotenv").config();
 // ─── IMPORTS ───────────────────────────────────
 const express    = require("express");
 const cors       = require("cors");
-const authRoutes = require("./routes/auth");
-const payRoutes  = require("./routes/payment");
+const authRoutes   = require("./routes/auth");
+const payRoutes    = require("./routes/payment");
+const tradeRoutes  = require("./routes/trades");
 const db         = require("./db/database");
 
 const app  = express();
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 // ─── ROUTES ─────────────────────────────────────
 app.use("/auth",    authRoutes);
 app.use("/",        payRoutes);
+app.use("/trades",  tradeRoutes);
 
 // Health check — useful for Railway deployment monitoring
 app.get("/health", (req, res) => {
