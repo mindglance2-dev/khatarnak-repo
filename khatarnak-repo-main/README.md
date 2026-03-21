@@ -1,2 +1,0 @@
-# khatarnak-repo
-rr
