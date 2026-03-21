@@ -26,11 +26,10 @@ const PORT = process.env.PORT || 5000;
 // Allow requests from your frontend domain
 // In production, replace "*" with your actual Netlify URL
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*",
-  methods: ["GET", "POST"],
+  origin: process.env.FRONTEND_URL || "https://secondjournal.space",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
 // Parse JSON request bodies
 app.use(express.json());
 
