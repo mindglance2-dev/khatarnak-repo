@@ -44,6 +44,28 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
+// ── PUT update trade ──  ← NEW: required by editTrade() in frontend
+router.put("/:id", requireAuth, async (req, res) => {
+  const { symbol, type, entry, exit, quantity, pnl, notes, trade_date } = req.body;
+  try {
+    const userId = await getUserId(req.user.googleId);
+    const result = await db.query(
+      `UPDATE trades
+       SET symbol=$1, type=$2, entry=$3, exit=$4, quantity=$5, pnl=$6, notes=$7, trade_date=$8
+       WHERE id=$9 AND user_id=$10
+       RETURNING *`,
+      [symbol, type, entry, exit, quantity, pnl, notes, trade_date, req.params.id, userId]
+    );
+    if (!result.rows.length) {
+      return res.status(404).json({ message: "Trade not found" });
+    }
+    res.json({ success: true, trade: result.rows[0] });
+  } catch (err) {
+    console.error("Update trade error:", err);
+    res.status(500).json({ message: "Failed to update trade" });
+  }
+});
+
 // ── DELETE trade ──
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
